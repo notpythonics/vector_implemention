@@ -21,6 +21,44 @@ public:
 		allocator.deallocate(elem, space);
 	}
 
+	vector(const vector& arg) {
+		elem = allocator.allocate(arg.sz);
+		for (int i = 0; i < arg.sz; ++i) allocator.construct(&elem[i], arg.elem[i]);
+		space = sz = arg.sz;
+	}
+
+	vector(vector&& arg) : sz{ arg.sz }, space{arg.space} {
+		elem = arg.elem;
+		arg.elem = nullptr;
+	}
+
+	T& operator=(const vector& arg) {
+		if (space >= arg.space) {
+			for (int i = 0; i < sz; ++i) allocator.destroy(&elem[i]);
+			for (int i = 0; i < arg.sz; ++i) allocator.construct(&elem[i], arg.elem[i]);
+			return;
+		}
+
+		for (int i = 0; i < sz; ++i) allocator.destroy(&elem[i]);
+		allocator.deallocate(elem, space);
+
+		T* ptr = allocator.allocate(arg.sz);
+		for (int i = 0; i < arg.sz; ++i) allocator.construct(&ptr[i], arg.elem[i]);
+		elem = ptr;
+		space = sz = arg.sz;
+		return *this;
+	}
+
+	T& operator=(vector&& arg) {
+		for (int i = 0; i < sz; ++i) allocator.destroy(&elem[i]);
+		allocator.deallocate(elem, space);
+
+		elem = arg.elem;
+		sz = arg.sz;
+		space = arg.space;
+		arg.elem = nullptr;
+	}
+
 	T& operator[](int i) { return elem[i]; }
 	const T& operator[](int i) const { return elem[i]; }
 
