@@ -27,7 +27,7 @@ public:
 		space = sz = arg.sz;
 	}
 
-	vector(vector&& arg) : sz{ arg.sz }, space{arg.space} {
+	vector(vector&& arg) : sz{ arg.sz }, space{ arg.space } {
 		elem = arg.elem;
 		arg.elem = nullptr;
 	}
@@ -78,6 +78,18 @@ public:
 
 		allocator.construct(&elem[sz], val);
 		++sz;
+	}
+
+	T& at(int i) {
+		if (!(i > -1 && i < space))
+			throw std::out_of_range{"out of range accses uwu"};
+		return elem[i];
+	}
+
+	const T& at(int i) const {
+		if (!(i > -1 && i < space))
+			throw std::out_of_range{ "out of range accses uwu" };
+		return elem[i];
 	}
 
 	int size() { return sz; }
