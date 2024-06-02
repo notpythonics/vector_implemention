@@ -66,7 +66,7 @@ public:
 		if (new_allocation <= space) return;
 
 		T* ptr = allocator.allocate(new_allocation);
-		for (int i = 0; i < sz; ++i) ptr[i] = elem[i];
+		for (int i = 0; i < sz; ++i) allocator.construct(&ptr[i], elem[i]);
 		for (int i = 0; i < sz; ++i) allocator.destroy(&elem[i]);
 		allocator.deallocate(elem, space);
 		elem = ptr;
